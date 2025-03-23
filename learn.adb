@@ -1,4 +1,4 @@
-with Ada.Text_IO, Ada.Exceptions, Ada.Tags, Ada.Numerics.Discrete_Random, Ada.Calendar.Formatting;
+with Ada.Text_IO, Ada.Exceptions, Ada.Tags, Ada.Numerics.Discrete_Random, Ada.Calendar.Formatting, Ada.Characters.Conversions, Ada.Strings.UTF_Encoding.Wide_Wide_Strings, Ada.Wide_Wide_Characters.Handling;
 use  Ada.Text_IO;
 
 procedure Main is
@@ -112,11 +112,20 @@ begin
 
 
    Unicode : declare
-      Heart : constant String := "❤️";
-      pragma Assert (Heart'Length = 6);
-      pragma Assert (Heart'Size   = 6 * 8);
+      UTF8         : constant String           := "œ";
+      Wide         : constant Wide_Wide_String := Ada.Strings.UTF_Encoding.Wide_Wide_Strings.Decode (UTF8);
+      Invalid_Wide : constant Wide_Wide_String := Ada.Characters.Conversions.To_Wide_Wide_String (UTF8);
+      Wide_Upper   : constant Wide_Wide_String := Ada.Wide_Wide_Characters.Handling.To_Upper (Wide);
+      UTF8_Upper   : constant String           := Ada.Strings.UTF_Encoding.Wide_Wide_Strings.Encode (Wide_Upper);
+      Byte : constant := 8;
    begin
-      Put_Line (Heart);
+      pragma Assert (UTF8        'Length = 2 and UTF8        'Size = 2 * Byte);
+      pragma Assert (Wide        'Length = 1 and Wide        'Size = 4 * Byte);
+      pragma Assert (Invalid_Wide'Length = 2 and Invalid_Wide'Size = 8 * Byte);
+
+      pragma Assert (Wide /= Invalid_Wide and Invalid_Wide = Wide_Wide_String'("œ"));
+
+      pragma Assert (UTF8_Upper = "Œ");
    end Unicode;
 
 

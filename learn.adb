@@ -1,4 +1,4 @@
-with Ada.Text_IO, Ada.Exceptions, Ada.Tags, Ada.Numerics.Discrete_Random, Ada.Calendar.Formatting, Ada.Characters.Conversions, Ada.Strings.UTF_Encoding.Wide_Wide_Strings, Ada.Wide_Wide_Characters.Handling;
+with Ada.Text_IO, Ada.Exceptions, Ada.Tags, Ada.Numerics.Discrete_Random, Ada.Calendar.Formatting, Ada.Characters.Conversions, Ada.Strings.UTF_Encoding.Wide_Wide_Strings, Ada.Wide_Wide_Characters.Handling, Ada.Containers.Generic_Array_Sort;
 use  Ada.Text_IO;
 
 procedure Main is
@@ -223,5 +223,16 @@ begin
    begin
       pragma Assert (Concatenate_Date ("_Hello")'Length = String'("2025-12-31 23:59:59_Hello")'Length);
    end Generics;
+
+
+   Sort : declare
+      S : String := "7415693208";
+      procedure String_Sort is new Ada.Containers.Generic_Array_Sort (Index_Type   => Positive,
+                                                                      Element_Type => Character,
+                                                                      Array_Type   => String);
+   begin
+      String_Sort (S);
+      pragma Assert (S = "0123456789");
+   end Sort;
 
 end Main;

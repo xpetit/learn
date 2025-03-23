@@ -119,13 +119,13 @@ begin
       UTF8_Upper   : constant String           := Ada.Strings.UTF_Encoding.Wide_Wide_Strings.Encode (Wide_Upper);
       Byte : constant := 8;
    begin
+      pragma Assert (UTF8_Upper = "Œ");
+
       pragma Assert (UTF8        'Length = 2 and UTF8        'Size = 2 * Byte);
       pragma Assert (Wide        'Length = 1 and Wide        'Size = 4 * Byte);
       pragma Assert (Invalid_Wide'Length = 2 and Invalid_Wide'Size = 8 * Byte);
 
       pragma Assert (Wide /= Invalid_Wide and Invalid_Wide = Wide_Wide_String'("œ"));
-
-      pragma Assert (UTF8_Upper = "Œ");
    end Unicode;
 
 
@@ -173,4 +173,53 @@ begin
          Put_Line ("unreachable");
          raise;
    end Errors;
+
+
+   Generics : declare
+      generic package Empty is end;
+      package Empty_2 is new Empty;
+      ------------------------------------------------------------------------
+      generic
+      -- type Modular                        is mod    <>;
+      -- type Floating_Point                 is digits <>;
+      -- type Ordinary_Fixed_Point           is delta  <>;
+      -- type Decimal__Fixed_Point           is delta  <> digits <>;
+         type Discrete                       is (<>);                   -- Enumeration & Integer
+         type Signed_Integer                 is range <>;
+         type Definite_Subtype               is private;
+         type Tagged_Limited_Or_Not          is tagged limited private; -- The actual type doesn't have to be limited
+         type Non_Limited (Really : Boolean) is private;                -- The actual type can't be limited
+
+         with procedure Do_Something                        is <>; -- Will use the conformant visible subprogram
+         with function "+"  (X, Y : Integer) return Integer is <>; -- Same and in that case: Standard."+"
+         with function Next (X    : Integer) return Integer is Integer'Succ;
+
+         with package Enum_IO is new Ada.Text_IO.Enumeration_IO (Discrete); -- Can also use <>
+
+         S : String;
+      package Test is end;
+
+      type Small_String is new String (1 .. 10);
+      procedure Do_Something is null;
+      type Thing is tagged null record;
+      type Non_Limited (Yes : Boolean) is null record;
+      function Skip_One (X : Integer) return Integer is (X + 2);
+      package Boolean_IO is new Ada.Text_IO.Enumeration_IO (Boolean);
+      package Test_2 is new Test (Boolean,
+                                  Signed_Integer        => Short_Short_Integer,
+                                  Definite_Subtype      => Small_String,
+                                  Tagged_Limited_Or_Not => Thing,
+                                  Non_Limited           => Non_Limited,
+                                  Enum_IO               => Boolean_IO,
+                                  S                     => "Hello");
+      ------------------------------------------------------------------------
+      generic
+         Prefix : String;
+      function Concatenate (S : String) return String;
+      function Concatenate (S : String) return String is (Prefix & S);
+      function Concatenate_Date is new Concatenate (Ada.Calendar.Formatting.Image (Ada.Calendar.Clock));
+   begin
+      pragma Assert (Concatenate_Date ("_Hello")'Length = String'("2025-12-31 23:59:59_Hello")'Length);
+   end Generics;
+
 end Main;

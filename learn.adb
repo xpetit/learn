@@ -185,6 +185,7 @@ begin
       -- type Ordinary_Fixed_Point           is delta  <>;
       -- type Decimal__Fixed_Point           is delta  <> digits <>;
          type Discrete                       is (<>);                   -- Enumeration & Integer
+         type Indefinite_Type           (<>) is private;
          type Signed_Integer                 is range <>;
          type Definite_Subtype               is private;
          type Tagged_Limited_Or_Not          is tagged limited private; -- The actual type doesn't have to be limited
@@ -206,6 +207,7 @@ begin
       function Skip_One (X : Integer) return Integer is (X + 2);
       package Boolean_IO is new Ada.Text_IO.Enumeration_IO (Boolean);
       package Test_2 is new Test (Boolean,
+                                  Indefinite_Type       => String,
                                   Signed_Integer        => Short_Short_Integer,
                                   Definite_Subtype      => Small_String,
                                   Tagged_Limited_Or_Not => Thing,

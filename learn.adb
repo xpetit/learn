@@ -63,7 +63,7 @@ begin
 
 
    Test_Attributes_3 : declare
-      type T is range 1 .. 0;
+      type T is range 1..0;
    begin
       pragma Assert (T'     Last'Image = " 0");
       pragma Assert (T'Base'Last'Image = " 127");
@@ -71,7 +71,7 @@ begin
 
 
    Test_Attributes_4 : declare
-      type T is new Character range 'A' .. 'D' with Static_Predicate => T in 'C' | 'B';
+      type T is new Character range 'A'..'D' with Static_Predicate => T in 'C' | 'B';
    begin
       pragma Assert (T'First_Valid = 'B'); -- "First" attribute is not allowed because the type has a predicate
    end Test_Attributes_4;
@@ -96,10 +96,10 @@ begin
 
 
    Sorted_List : declare
-      type T is array (Character range 'B' .. 'E') of Integer;
+      type T is array (Character range 'B'..'E') of Integer;
       List : constant T := (1, 2, 2, 3);
    begin
-      pragma Assert ((for all I in List'First .. Character'Pred (List'Last) => List (I) <= List (Character'Succ (I))), "The list is sorted");
+      pragma Assert ((for all I in List'First..Character'Pred (List'Last) => List (I) <= List (Character'Succ (I))), "The list is sorted");
       declare
          List_2 : T := List;
       begin
@@ -200,7 +200,7 @@ begin
          S : String;
       package Test is end;
 
-      type Small_String is new String (1 .. 10);
+      type Small_String is new String (1..10);
       procedure Do_Something is null;
       type Thing is tagged null record;
       type Non_Limited (Yes : Boolean) is null record;
